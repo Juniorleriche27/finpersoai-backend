@@ -57,6 +57,28 @@ Principes de cadrage :
 - les autres composants restent IA au sens produit, car ils pilotent des decisions, du retrieval, du ranking ou de la supervision ;
 - chaque composant doit rester independant, observable, testable et remplacable.
 
+### 3.1 Cartographie technique des 9 composants
+
+| # | Composant IA | Inputs principaux | Outputs attendus | Type de modele / moteur | Metriques principales | Dossier cible |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Categorisation des transactions | Libelle, montant, date, canal, contrepartie, historique utilisateur | Categorie predite, score de confiance, top categories alternatives | Classification supervisee tabulaire + texte leger | Accuracy, Macro F1, taux de correction utilisateur | `ai/categorization/` |
+| 2 | Prevision de tresorerie | Historique des flux, periodicite revenus/charges, solde courant, saisonnalite | Solde predit, intervalle d'incertitude, alerte deficit | Time series + features metier | MAE, RMSE, MAPE, taux d'alerte juste | `ai/forecasting/` |
+| 3 | Detection d'anomalies | Transactions recentes, historique utilisateur, categories, contexte temporel | Score d'anomalie, motif, alerte explicable, statut a valider | Regles metier + detection outliers | Precision alerte, recall, faux positifs | `ai/anomaly_detection/` |
+| 4 | Scoring budgetaire explicable | Revenus, charges, ratio d'endettement, regularite flux, incidents | Score 0-100, classe de risque, facteurs explicatifs | Modele tabulaire explicable | AUC, KS, calibration, stabilite du score | `ai/scoring/` |
+| 5 | Moteur de recommandations | Scores IA, anomalies, categories, objectifs utilisateur, contexte financier | Recommandations priorisees, estimation d'impact, justification | Regles + ranking | CTR, adoption, impact estime vs observe | `app/services/` |
+| 6 | Matching experts-utilisateurs | Profil utilisateur, besoin, urgence, langue, domaine expert, disponibilite | Liste d'experts, score d'adequation, justification de matching | Ranking / matching | Precision@K, taux de prise en charge, satisfaction | `app/services/` |
+| 7 | Analyse du besoin utilisateur | Texte libre, formulaire, historique d'interactions, contexte financier | Intention, type de besoin, niveau d'urgence, routage | NLP leger / classification | Accuracy, Macro F1, taux de routage correct | `ai/inference/` |
+| 8 | Assistant documentaire RAG | Question utilisateur, base documentaire validee, contexte conversationnel | Reponse, citations, score de confiance, refus motive si besoin | Retrieval + embeddings + LLM | Precision retrieval, groundedness, taux de reponse avec source | `rag/` |
+| 9 | Monitoring, drift et retraining intelligence | Predictions, labels reels, feedback, distributions de features, logs | Alertes drift, rapports de performance, decision de retraining | Supervision analytique | Drift score, performance decay, delai de detection | `ai/evaluation/` |
+
+Regle d'implementation :
+
+- les composants `1`, `2`, `3` et `4` sont les priorites de modelisation ;
+- les composants `5` et `6` peuvent commencer en logique hybride avant d'etre raffines ;
+- le composant `7` peut rester simple au depart ;
+- le composant `8` s'appuie sur le sous-systeme `rag/` ;
+- le composant `9` doit etre branche des la V1 pour surveiller les autres.
+
 ## 4. Architecture fonctionnelle IA
 
 Le systeme IA est organise en quatre couches principales.
@@ -143,19 +165,19 @@ Fonctions attendues :
 
 ## 6. Gouvernance, securite et supervision humaine
 
-### 5.1 Transparence
+### 6.1 Transparence
 
 - chaque resultat IA doit etre explicable ;
 - aucune boite noire ne doit etre exposee sans explication exploitable ;
 - les facteurs qui influencent un score ou une recommandation doivent etre consultables.
 
-### 5.2 Confidentialite
+### 6.2 Confidentialite
 
 - acces restreint aux donnees sensibles ;
 - consentement obligatoire pour les usages qui le requierent ;
 - audit des acces et des traitements.
 
-### 5.3 Tracabilite
+### 6.3 Tracabilite
 
 Les elements suivants doivent etre journalises :
 
@@ -165,7 +187,7 @@ Les elements suivants doivent etre journalises :
 - requetes API ;
 - sorties critiques des modules IA.
 
-### 5.4 Supervision humaine
+### 6.4 Supervision humaine
 
 Les actions suivantes ne doivent pas etre automatisees sans validation humaine :
 
@@ -175,18 +197,18 @@ Les actions suivantes ne doivent pas etre automatisees sans validation humaine :
 
 ## 7. Contraintes techniques
 
-### 6.1 Performance
+### 7.1 Performance
 
 - temps de reponse faible ;
 - latence minimale sur les parcours critiques.
 
-### 6.2 Scalabilite
+### 7.2 Scalabilite
 
 - support de la croissance du nombre d'utilisateurs ;
 - support de l'augmentation du volume de donnees ;
 - capacite a faire evoluer les pipelines et les modeles sans refonte globale.
 
-### 6.3 Modularite
+### 7.3 Modularite
 
 Chaque module doit etre :
 
@@ -195,7 +217,7 @@ Chaque module doit etre :
 - remplacable ;
 - observable.
 
-### 6.4 Logging et audit
+### 7.4 Logging et audit
 
 - toutes les actions doivent etre tracees ;
 - les decisions IA doivent etre enregistrees ;
