@@ -35,11 +35,33 @@ Le systeme IA couvre les modules suivants :
 
 Ces modules constituent le moteur d'intelligence financiere de FinPersoAI.
 
-## 3. Architecture fonctionnelle IA
+## 3. Cible d'architecture : 9 composants IA
+
+FinPersoAI part sur une cible de neuf composants IA distincts. Tous ne sont pas necessairement des modeles entraines au sens strict. Certains sont des moteurs hybrides ou des composants de supervision, mais ils font partie du systeme IA global.
+
+| # | Composant IA | Role principal | Nature du composant | Priorite |
+| --- | --- | --- | --- | --- |
+| 1 | Categorisation des transactions | Affecter automatiquement une categorie a chaque transaction avec un score de confiance. | Modele ML supervise | V1 |
+| 2 | Prevision de tresorerie | Estimer les soldes futurs, les tensions de cash et l'incertitude. | Modele ML / time series | V1 |
+| 3 | Detection d'anomalies | Identifier les depenses inhabituelles et signaux suspects. | Modele hybride regles + ML | V1 |
+| 4 | Scoring budgetaire explicable | Produire un score interpretable, une classe de risque et les facteurs explicatifs. | Modele ML explicable | V1 |
+| 5 | Moteur de recommandations | Generer des actions concretes, priorisees et estimees en impact. | Moteur hybride regles + ranking | V2 |
+| 6 | Matching experts-utilisateurs | Associer un utilisateur au bon expert selon son profil et son besoin. | Modele de ranking / matching | V2 |
+| 7 | Analyse du besoin utilisateur | Comprendre l'intention, le contexte et le type d'accompagnement attendu. | Classification NLP legere | V2 |
+| 8 | Assistant documentaire RAG | Repondre a partir de documents valides avec citations et refus en cas d'insuffisance. | Systeme RAG embeddings + LLM | V1 |
+| 9 | Monitoring, drift et retraining intelligence | Surveiller la qualite des modeles, detecter les derives et declencher les retrainings. | Composant IA de supervision | V1 |
+
+Principes de cadrage :
+
+- la cible est de neuf composants IA, mais seulement cinq a sept seront de vrais modeles entraines au depart ;
+- les autres composants restent IA au sens produit, car ils pilotent des decisions, du retrieval, du ranking ou de la supervision ;
+- chaque composant doit rester independant, observable, testable et remplacable.
+
+## 4. Architecture fonctionnelle IA
 
 Le systeme IA est organise en quatre couches principales.
 
-### 3.1 Data Layer
+### 4.1 Data Layer
 
 Responsabilite : preparer des donnees propres et exploitables.
 
@@ -55,7 +77,7 @@ Sortie attendue :
 
 - transactions propres et pretes pour analyse.
 
-### 3.2 Analytics Layer
+### 4.2 Analytics Layer
 
 Responsabilite : transformer les donnees en intelligence exploitable.
 
@@ -75,7 +97,7 @@ Sortie attendue :
 - alertes ;
 - recommandations actionnables.
 
-### 3.3 RAG Layer
+### 4.3 RAG Layer
 
 Responsabilite : fournir des reponses fiables basees sur des documents.
 
@@ -92,7 +114,7 @@ Contraintes obligatoires :
 - reponses avec citations explicites ;
 - refus de repondre si les donnees sont insuffisantes ou non fiables.
 
-### 3.4 Orchestration et supervision
+### 4.4 Orchestration et supervision
 
 Responsabilite : coordonner et superviser l'ensemble du systeme.
 
@@ -104,7 +126,7 @@ Fonctions attendues :
 - journalisation ;
 - supervision humaine.
 
-## 4. Exigences fonctionnelles
+## 5. Exigences fonctionnelles
 
 | ID | Domaine | Attendus operationnels |
 | --- | --- | --- |
@@ -119,7 +141,7 @@ Fonctions attendues :
 | EF9 | Matching experts | Analyser le besoin utilisateur, proposer des experts et fournir un score d'adequation. |
 | EF10 | Monitoring | Mesurer la performance des modeles, detecter le drift et declencher le retraining si necessaire. |
 
-## 5. Gouvernance, securite et supervision humaine
+## 6. Gouvernance, securite et supervision humaine
 
 ### 5.1 Transparence
 
@@ -151,7 +173,7 @@ Les actions suivantes ne doivent pas etre automatisees sans validation humaine :
 - suppression de donnees ;
 - modification critique d'un dossier ou d'une configuration sensible.
 
-## 6. Contraintes techniques
+## 7. Contraintes techniques
 
 ### 6.1 Performance
 
@@ -179,7 +201,7 @@ Chaque module doit etre :
 - les decisions IA doivent etre enregistrees ;
 - les erreurs et refus doivent etre auditables.
 
-## 7. Gestion du cold start
+## 8. Gestion du cold start
 
 Cas couverts :
 
@@ -194,7 +216,7 @@ Approche attendue :
 - afficher un message d'incertitude lorsque la confiance est insuffisante ;
 - enrichir progressivement les signaux a mesure que les donnees augmentent.
 
-## 8. KPIs IA
+## 9. KPIs IA
 
 Les mesures suivantes doivent etre suivies :
 
@@ -205,7 +227,7 @@ Les mesures suivantes doivent etre suivies :
 - satisfaction utilisateur ;
 - stabilite du score.
 
-## 9. Tests et validation
+## 10. Tests et validation
 
 Avant mise en production :
 
@@ -221,7 +243,7 @@ Apres mise en production :
 - revue des incidents et des refus ;
 - suivi de drift et de degradation de performance.
 
-## 10. Evolution continue
+## 11. Evolution continue
 
 Le systeme doit evoluer via :
 
@@ -237,7 +259,7 @@ Contraintes de gouvernance :
 - validation avant deploiement ;
 - compatibilite avec l'architecture existante.
 
-## 11. Conclusion
+## 12. Conclusion
 
 Le systeme IA de FinPersoAI est un systeme modulaire, explicable et supervise qui transforme les donnees financieres en :
 
