@@ -16,6 +16,7 @@ Backend scaffold for FinPersoAI based on FastAPI.
 ## Key documentation
 
 - `CAHIER_DES_CHARGES_IA.md`: operational AI requirements and governance reference for the team
+- `docs/data_inventory.md`: dataset classification and expected raw-data folder mapping
 
 ## Quick start
 
